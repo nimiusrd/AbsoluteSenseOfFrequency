@@ -1,0 +1,56 @@
+.material-icons.md-72 {
+  font-size: 72px;
+}
+
+  .demo-card-wide > .mdl-card__actions {
+    color: #000;
+    height: auto;
+  }
+  div#resultMedia {
+    wide: 0 auto;
+    height: 270px;
+    background: url("./https---www.pakutaso.com-assets_c-2015-05-N112_udewobatunisuru-thumb-1000xauto-14381.jpg") center/cover;
+  }
+
+  .mdl-card__supporting-text {
+      color: rgba(0,0,0,.54);
+      font-size: 13px;
+      line-height: 18px;
+      overflow: hidden;
+      padding: 16px;
+      width: 100%;
+  }
+
+div.AudioBox {
+  height: 100px;
+}
+
+i#audioState {
+  margin: auto;
+}
+
+button#freqOption {
+  margin: 0 auto;
+}
+
+.mdl-button {
+  text-transform: none;
+}
+
+.mdl-button__option {
+  margin: 4px;
+}
+
+.sliderBox {
+  margin:10px 0px 10px 0px;
+  }
+  .sliderState {
+    display: table;
+    margin: 0 auto;
+  }
+@media screen and (max-device-width: 640px) {
+  .mdl-layout-title > h1 {
+    font-size: 100%;
+    font-weight: bold;
+  }
+}

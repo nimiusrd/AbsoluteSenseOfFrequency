@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>絶対周波数感ゲーム</title>
+  <script src="https://storage.googleapis.com/code.getmdl.io/1.0.2/material.min.js"></script>
+  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.blue-light_blue.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <!-- Twitter card -->
+  <meta name="twitter:card" content="photo" />
+  <meta name="twitter:site" content="@nimiusxp" />
+  <meta name="twitter:title" content="Twitterカードで遊んでいます！！よろしくお願いします！！" />
+  <meta name="twitter:image:src" content="http://nimius.azurewebsites.net/image.png" />
+  <meta name="twitter:url" content="http://nimius.azurewebsites.net/AbsoluteSenseOfFrequency.html" />
+  <script type="text/javascript">
+        var appInsights=window.appInsights||function(config){
+            function r(config){t[config]=function(){var i=arguments;t.queue.push(function(){t[config].apply(t,i)})}}var t={config:config},u=document,e=window,o="script",s=u.createElement(o),i,f;for(s.src=config.url||"//az416426.vo.msecnd.net/scripts/a/ai.0.js",u.getElementsByTagName(o)[0].parentNode.appendChild(s),t.cookie=u.cookie,t.queue=[],i=["Event","Exception","Metric","PageView","Trace"];i.length;)r("track"+i.pop());return r("setAuthenticatedUserContext"),r("clearAuthenticatedUserContext"),config.disableExceptionTracking||(i="onerror",r("_"+i),f=e[i],e[i]=function(config,r,u,e,o){var s=f&&f(config,r,u,e,o);return s!==!0&&t["_"+i](config,r,u,e,o),s}),t
+        }({
+            instrumentationKey:"1353b4e2-8d65-4a4a-81c6-061f780b68f0"
+        });
+
+        window.appInsights=appInsights;
+        appInsights.trackPageView();
+  </script>
+</head>
+<body>
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+        <span class="mdl-layout-title"><h1>絶対周波数感ゲーム</h1></span>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+          <a class="mdl-navigation__link" href="https://twitter.com/nimiusxp">@nimiusxp</a>
+        </nav>
+      </div>
+    </header>
+    <main class="mdl-layout__content">
+      <div class="page-content mdl-grid" id="main">
+        <div class="mdl-cell mdl-cell--2-col-desktop mdl-cell--hide-phone mdl-cell--hide-tablet"></div>
+        <div class="mdl-card mdl-shadow--2dp demo-card-wide mdl-cell mdl-cell--4-col-phone mdl-cell--8-col">
+          <div class="mdl-card__supporting-text">
+            絶対周波数感ゲームを行います。<br>
+            最低周波数、選択肢の数を設定してください。
+            音量に注意してください。
+          </div>
+          <div class="mdl-card__actions mdl-card--border">
+            <div class="sliderBox">
+              最低周波数
+              <span id="showFreqRange" class="sliderState"></span>
+              <input class="mdl-slider mdl-js-slider" type="range" min="200" max="2000" value="1000" step="10" id="minFreq">
+            </div>
+            <div class="sliderBox">
+              選択肢の数
+              <span id="showOptRange" class="sliderState"></span>
+              <input class="mdl-slider mdl-js-slider" type="range" min="2" max="8" value="4" step="1" id="opt">
+            </div>
+          </div>
+          <div class="mdl-card__actions mdl-card--border">
+            <button id="start" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--primary">
+              START !
+            </button>
+          </div>
+        </div>
+        <div class="mdl-cell mdl-cell--2-col-desktop mdl-cell--hide-phone mdl-cell--hide-tablet"></div>
+      </div>
+    </main>
+  </div>
+  <script type="text/javascript">
+  var showFreqRange = function() {
+    document.getElementById("showFreqRange").textContent = document.getElementById("minFreq").value;
+  }
+  showFreqRange();
+  document.getElementById("minFreq").addEventListener("input",showFreqRange);
+  //document.getElementById("minFreq").addEventListener("change",showFreqRange);
+
+  var showOptRange = function() {
+    document.getElementById("showOptRange").textContent = document.getElementById("opt").value;
+  }
+  showOptRange();
+  document.getElementById("opt").addEventListener("input",showOptRange);
+  //document.getElementById("opt").addEventListener("change",showOptRange);
+
+  //音の設定
+  var audioContext;
+  var oscillator;
+  var minFreq;
+  var opt;
+  var interval = 100;
+  var currentFreq;
+  var optedFreq;
+
+  function initAudioContext() {
+    try {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }  catch(e) {
+      console.log(e);
+    }
+  }
+
+  var getFreq = function() {
+    //指定した種類、範囲の周波数をランダムに生成
+    currentFreq = Math.floor(Math.random() * opt) * interval + minFreq;
+  };
+
+  var makeAudio = function () {
+    oscillator = audioContext.createOscillator();
+    oscillator.connect(audioContext.destination);
+    oscillator.type = "sine";
+    oscillator.frequency.value = currentFreq;
+  };
+
+  var startPlaying = function() {
+    oscillator.start();
+    document.getElementById("play").setAttribute("id", "stop");
+    document.getElementById("audioState").textContent = 'pause_circle_filled';
+    document.getElementById("stop").removeEventListener("click", startPlaying);
+    document.getElementById("stop").addEventListener("click", stopPlaying);
+  }
+
+  var stopPlaying = function() {
+    oscillator.stop();
+    oscillator.disconnect();
+    makeAudio();
+    document.getElementById("stop").setAttribute("id", "play");
+    document.getElementById("audioState").textContent = 'play_circle_filled';
+    document.getElementById("play").removeEventListener("click", stopPlaying);
+    document.getElementById("play").addEventListener("click", startPlaying);
+  };
+//ページの操作
+  var makeAudioController = function() {
+    //再生ボックスを作成
+    initAudioContext();
+    makeAudio();
+    componentHandler.upgradeElement(document.getElementById("play"));
+    document.getElementById("play").addEventListener("click", startPlaying);
+  }
+
+  var makeFreqOption = function() {
+    //選択肢を作成
+    freqOption = document.getElementById("freqOption");
+    for (var i = 0; i < opt; i++) {
+      var optFreq = minFreq + i * interval;
+      var optElem = document.createElement("button");
+      optElem.appendChild(document.createTextNode(optFreq + "Hz"));
+      optElem.className = "mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--primary mdl-button__option";
+      componentHandler.upgradeElement(optElem);
+      optElem.setAttribute("value", optFreq);
+      freqOption.appendChild(optElem);
+    }
+  };
+
+  var getAnswer = function(e){
+    optedFreq = parseInt(this.value);
+    while(main.firstChild){
+      main.removeChild(main.firstChild);
+    }
+    checkAnswer(optedFreq);
+  };
+
+  var checkAnswer = function(optedFreq) {
+    try {
+      oscillator.stop();
+      oscillator.disconnect();
+    } catch(e) {
+      console.log(e);
+    }
+    main.innerHTML =
+    '<div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--hide-phone mdl-cell--2-col-tablet"></div>'+
+    '<div class="mdl-card mdl-shadow--2dp demo-card-wide mdl-cell mdl-cell--4-col">'+
+      '<div id="resultMedia" class="mdl-card__media">'+
+      '</div>'+
+      '<div id="resultText" class="mdl-card__supporting-text">'+
+      '</div>'+
+      '<div class="mdl-card__actions">'+
+        '<a href="http://twitter.com/share?url=http://nimius.azurewebsites.net/AbsoluteSenseOfFrequency.html&text=絶対周波数感ゲームをクリアできませんでした。&via=nimiusxp" id="tweetAnchor">'+
+          '<button id="tweetButton" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--primary">'+
+            '結果をツイートする'+
+          '</button>'+
+        '</a>'+
+      '</div>'+
+    '</div>'+
+    '<div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--hide-phone mdl-cell--2-col-tablet"></div>';
+
+    componentHandler.upgradeElement(document.getElementById("tweetButton"));
+    resultText = document.getElementById("resultText");
+    console.log(optedFreq);
+    console.log(currentFreq);
+
+    if (optedFreq !== currentFreq) {
+      resultText.textContent = "残念！不正解です！";
+    } else {
+      document.getElementById("resultMedia").style.background='url("./https---www.pakutaso.com-assets_c-2015-06-MAX98_yattazeyossya20140531-thumb-1000xauto-17162.jpg") center/cover';
+      resultText.textContent = "おめでとう！正解です！";
+      document.getElementById("tweetAnchor").href="http://twitter.com/share?url=http://nimius.azurewebsites.net/AbsoluteSenseOfFrequency.html&text=絶対周波数感ゲームをクリアできました。&via=nimiusxp"
+    }
+  };
+
+  var startGame = function() {
+    var main = document.getElementById("main");
+    minFreq = parseInt(document.getElementById("minFreq").value);
+    if (minFreq >= 200 && minFreq <= 2000) {
+      opt = parseInt(document.getElementById("opt").value);
+      while(main.firstChild){
+        main.removeChild(main.firstChild);
+      }
+      getFreq();
+      main.innerHTML =
+      '<div class="mdl-cell mdl-cell--2-col-desktop mdl-cell--hide-phone mdl-cell--hide-tablet"></div>'+
+      '<div class="mdl-card mdl-shadow--2dp demo-card-wide mdl-cell mdl-cell--4-col-phone mdl-cell--8-col">'+
+        '<div id="play" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-card mdl-card__actions AudioBox">'+
+          '<i id="audioState" class="material-icons md-72">play_circle_filled</i>'+
+        '</div>'+
+        '<div class="mdl-card__supporting-text mdl-card--border">'+
+          '再生ボタンを押したときに流れる音の周波数はどれでしょう？'+
+        '</div>'+
+        '<div class="mdl-card__actions mdl-card--border" id="freqOption">'+
+        '</div>'+
+      '</div>'+
+      '<div class="mdl-cell mdl-cell--2-col-desktop mdl-cell--hide-phone mdl-cell--hide-tablet"></div>';
+      makeAudioController();
+      makeFreqOption();
+      Array.prototype.forEach.call(
+        freqOption.getElementsByTagName("button"),
+        function(elem) {
+          elem.addEventListener("click", getAnswer.bind(elem));
+        }
+      );
+    } else {
+      window.alert("最低周波数は200Hzから2000Hzの整数値を指定してください。");
+    }
+  };
+  document.getElementById("start").addEventListener("click", startGame);
+  </script>
+</body>
+</html>
