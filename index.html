@@ -49,30 +49,27 @@
     </main>
   </div>
   <script type="text/javascript">
-  var showFreqRange = function() {
+  const showFreqRange = () => {
     document.getElementById("showFreqRange").textContent = document.getElementById("minFreq").value;
   }
   showFreqRange();
-  document.getElementById("minFreq").addEventListener("input",showFreqRange);
-  //document.getElementById("minFreq").addEventListener("change",showFreqRange);
+  document.getElementById("minFreq").addEventListener("input", showFreqRange);
 
-  var showOptRange = function() {
+  const showOptRange = () => {
     document.getElementById("showOptRange").textContent = document.getElementById("opt").value;
   }
   showOptRange();
   document.getElementById("opt").addEventListener("input",showOptRange);
-  //document.getElementById("opt").addEventListener("change",showOptRange);
 
   //音の設定
-  var audioContext;
-  var oscillator;
-  var minFreq;
-  var opt;
-  var interval = 100;
-  var currentFreq;
-  var optedFreq;
+  let audioContext;
+  let oscillator;
+  let minFreq;
+  let opt;
+  const interval = 100;
+  let currentFreq;
 
-  function initAudioContext() {
+  const initAudioContext = () => {
     try {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }  catch(e) {
@@ -80,19 +77,19 @@
     }
   }
 
-  var getFreq = function() {
+  const getFreq = () => {
     //指定した種類、範囲の周波数をランダムに生成
     currentFreq = Math.floor(Math.random() * opt) * interval + minFreq;
   };
 
-  var makeAudio = function () {
+  const makeAudio = () => {
     oscillator = audioContext.createOscillator();
     oscillator.connect(audioContext.destination);
     oscillator.type = "sine";
     oscillator.frequency.value = currentFreq;
   };
 
-  var startPlaying = function() {
+  const startPlaying = () => {
     oscillator.start();
     document.getElementById("play").setAttribute("id", "stop");
     document.getElementById("audioState").textContent = 'pause_circle_filled';
@@ -100,7 +97,7 @@
     document.getElementById("stop").addEventListener("click", stopPlaying);
   }
 
-  var stopPlaying = function() {
+  const stopPlaying = () => {
     oscillator.stop();
     oscillator.disconnect();
     makeAudio();
@@ -109,8 +106,8 @@
     document.getElementById("play").removeEventListener("click", stopPlaying);
     document.getElementById("play").addEventListener("click", startPlaying);
   };
-//ページの操作
-  var makeAudioController = function() {
+  //ページの操作
+  const makeAudioController = () => {
     //再生ボックスを作成
     initAudioContext();
     makeAudio();
@@ -118,13 +115,13 @@
     document.getElementById("play").addEventListener("click", startPlaying);
   }
 
-  var makeFreqOption = function() {
+  const makeFreqOption = () => {
     //選択肢を作成
     freqOption = document.getElementById("freqOption");
-    for (var i = 0; i < opt; i++) {
-      var optFreq = minFreq + i * interval;
-      var optElem = document.createElement("button");
-      optElem.appendChild(document.createTextNode(optFreq + "Hz"));
+    for (let i = 0; i < opt; i++) {
+      const optFreq = minFreq + i * interval;
+      const optElem = document.createElement("button");
+      optElem.appendChild(document.createTextNode(`${optFreq}Hz`));
       optElem.className = "mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--primary mdl-button__option";
       componentHandler.upgradeElement(optElem);
       optElem.setAttribute("value", optFreq);
@@ -132,15 +129,7 @@
     }
   };
 
-  var getAnswer = function(e){
-    optedFreq = parseInt(this.value);
-    while(main.firstChild){
-      main.removeChild(main.firstChild);
-    }
-    checkAnswer(optedFreq);
-  };
-
-  var checkAnswer = function(optedFreq) {
+  const checkAnswer = optedFreq => {
     try {
       oscillator.stop();
       oscillator.disconnect();
@@ -148,21 +137,21 @@
       console.log(e);
     }
     main.innerHTML =
-    '<div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--hide-phone mdl-cell--2-col-tablet"></div>'+
-    '<div class="mdl-card mdl-shadow--2dp demo-card-wide mdl-cell mdl-cell--4-col">'+
-      '<div id="resultMedia" class="mdl-card__media">'+
-      '</div>'+
-      '<div id="resultText" class="mdl-card__supporting-text">'+
-      '</div>'+
-      '<div class="mdl-card__actions">'+
-        '<a href="http://twitter.com/share?url=http://nimius.azurewebsites.net/AbsoluteSenseOfFrequency.html&text=絶対周波数感ゲームをクリアできませんでした。&via=nimiusxp" id="tweetAnchor">'+
-          '<button id="tweetButton" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--primary">'+
-            '結果をツイートする'+
-          '</button>'+
-        '</a>'+
-      '</div>'+
-    '</div>'+
-    '<div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--hide-phone mdl-cell--2-col-tablet"></div>';
+      `<div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--hide-phone mdl-cell--2-col-tablet"></div>
+      <div class="mdl-card mdl-shadow--2dp demo-card-wide mdl-cell mdl-cell--4-col">
+        <div id="resultMedia" class="mdl-card__media">
+        </div>
+        <div id="resultText" class="mdl-card__supporting-text">
+        </div>
+        <div class="mdl-card__actions">
+          <a href="http://twitter.com/share?url=http://nimius.azurewebsites.net/AbsoluteSenseOfFrequency.html&text=絶対周波数感ゲームをクリアできませんでした。" id="tweetAnchor">
+            <button id="tweetButton" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--primary">
+              結果をツイートする
+            </button>
+          </a>
+        </div>
+      </div>
+      <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--hide-phone mdl-cell--2-col-tablet"></div>`
 
     componentHandler.upgradeElement(document.getElementById("tweetButton"));
     resultText = document.getElementById("resultText");
@@ -174,12 +163,21 @@
     } else {
       document.getElementById("resultMedia").style.background='url("./correct.jpg") center/cover';
       resultText.textContent = "おめでとう！正解です！";
-      document.getElementById("tweetAnchor").href="http://twitter.com/share?url=http://nimius.azurewebsites.net/AbsoluteSenseOfFrequency.html&text=絶対周波数感ゲームをクリアできました。&via=nimiusxp"
+      document.getElementById("tweetAnchor").href="http://twitter.com/share?url=http://nimius.azurewebsites.net/AbsoluteSenseOfFrequency.html&text=絶対周波数感ゲームをクリアできました。"
     }
   };
 
-  var startGame = function() {
-    var main = document.getElementById("main");
+  const getAnswer = event => {
+    const optedFreq = parseInt(event.target.parentNode.value);
+    while(main.firstChild){
+      main.removeChild(main.firstChild);
+    }
+    checkAnswer(optedFreq);
+  };
+
+
+  const startGame = () => {
+    const main = document.getElementById("main");
     minFreq = parseInt(document.getElementById("minFreq").value);
     if (minFreq >= 200 && minFreq <= 2000) {
       opt = parseInt(document.getElementById("opt").value);
@@ -188,26 +186,23 @@
       }
       getFreq();
       main.innerHTML =
-      '<div class="mdl-cell mdl-cell--2-col-desktop mdl-cell--hide-phone mdl-cell--hide-tablet"></div>'+
-      '<div class="mdl-card mdl-shadow--2dp demo-card-wide mdl-cell mdl-cell--4-col-phone mdl-cell--8-col">'+
-        '<div id="play" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-card mdl-card__actions AudioBox">'+
-          '<i id="audioState" class="material-icons md-72">play_circle_filled</i>'+
-        '</div>'+
-        '<div class="mdl-card__supporting-text mdl-card--border">'+
-          '再生ボタンを押したときに流れる音の周波数はどれでしょう？'+
-        '</div>'+
-        '<div class="mdl-card__actions mdl-card--border" id="freqOption">'+
-        '</div>'+
-      '</div>'+
-      '<div class="mdl-cell mdl-cell--2-col-desktop mdl-cell--hide-phone mdl-cell--hide-tablet"></div>';
+        `<div class="mdl-cell mdl-cell--2-col-desktop mdl-cell--hide-phone mdl-cell--hide-tablet"></div>
+        <div class="mdl-card mdl-shadow--2dp demo-card-wide mdl-cell mdl-cell--4-col-phone mdl-cell--8-col">
+          <div id="play" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-card mdl-card__actions AudioBox">
+            <i id="audioState" class="material-icons md-72">play_circle_filled</i>
+          </div>
+          <div class="mdl-card__supporting-text mdl-card--border">
+            再生ボタンを押したときに流れる音の周波数はどれでしょう？
+          </div>
+          <div class="mdl-card__actions mdl-card--border" id="freqOption">
+          </div>
+        </div>
+        <div class="mdl-cell mdl-cell--2-col-desktop mdl-cell--hide-phone mdl-cell--hide-tablet"></div>`
       makeAudioController();
       makeFreqOption();
-      Array.prototype.forEach.call(
-        freqOption.getElementsByTagName("button"),
-        function(elem) {
-          elem.addEventListener("click", getAnswer.bind(elem));
-        }
-      );
+      Array.from(freqOption.getElementsByTagName("button")).forEach(elem => {
+        elem.addEventListener("click", getAnswer);
+      });
     } else {
       window.alert("最低周波数は200Hzから2000Hzの整数値を指定してください。");
     }
